@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.Python
+
+# Virtual env
+.venv/
+ENV/
+venv/
+
+# OS/editor
+.DS_Store
+.vscode/
+
+# Secrets
+.env
+.env.*
+
+# Data/indices
+faiss_summary_index/
+
+# Node caches (if any)
+node_modules/
+
+# Local artifacts
+/tmp/

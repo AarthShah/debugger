@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Debugger</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script>
+    window.MonacoEnvironment = { getWorkerUrl: function() { return '/monaco-worker.js'; } };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/loader.min.js"></script>
+  <script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs' } });
+  </script>
+</head>
+<body>
+  <div id="notify" class="hidden"></div>
+  <div id="topbar">
+    <div class="left">
+      <strong>AI Debugger</strong>
+    </div>
+    <div class="right">
+      <button id="visionSubmit" class="btn success">Submit</button>
+      <button id="visionShot" class="btn secondary">Screenshot</button>
+      <select id="model">
+        <option value="gemini-2.5-pro" selected>gemini-2.5-pro</option>
+        <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+        <option value="gemini-1.5-pro-latest">gemini-1.5-pro-latest</option>
+      </select>
+      <button id="analyze" class="btn">Analyze</button>
+      <button id="apply" class="btn success">Apply Fixes</button>
+      <button id="run" class="btn secondary">Run</button>
+    </div>
+  </div>
+    <div id="container">
+    <div id="sidebar">
+      <div class="section">
+        <label>Filename</label>
+        <input id="filename" value="snippet.py" />
+      </div>
+      <div class="section">
+        <label>Timeout (s)</label>
+        <input id="timeout" type="number" value="45" />
+      </div>
+      <div class="section">
+        <label>Edits JSON</label>
+        <textarea id="edits" placeholder="Edits JSON will appear here"></textarea>
+      </div>
+      <div class="section">
+        <label>Vision Prompt</label>
+        <textarea id="visionPrompt" placeholder="Describe what the UI should look/do based on the image"></textarea>
+      </div>
+      <div class="section">
+        <label>Vision Image</label>
+        <input id="visionImageUrl" placeholder="https://example.com/screenshot.png (optional)" />
+        <div class="hint">or upload:</div>
+        <input id="visionImageFile" type="file" accept="image/*" />
+        <button id="visionAnalyze" class="btn secondary">Analyze with Vision</button>
+      </div>
+    </div>
+    <div id="mainpane">
+      <div id="editor"></div>
+      <div id="console">
+        <textarea id="runout" placeholder="Program output will appear here" readonly></textarea>
+      </div>
+    </div>
+    <!-- Modal Overlay for Cross-check -->
+    <div id="modalOverlay" class="hidden">
+      <div id="crossModal" class="modal">
+        <div class="modal-header">
+          <div class="title">Cross-check</div>
+          <button id="crossClose" class="btn ghost" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="crossMeta">
+            <span id="overallBadge" class="badge">mixed</span>
+            <span id="countPass" class="count">0 passed</span>
+            <span id="countFail" class="count">0 failed</span>
+          </div>
+          <div id="crossSummary" class="summary"></div>
+          <ul id="testList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/main.js"></script>
+</body>
+</html>

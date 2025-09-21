@@ -1,0 +1,54 @@
+def memoize(func):
+    """
+    A decorator that attempts to cache function results to avoid re-computation.
+    It stores results in a dictionary keyed by the arguments.
+    """
+    cache = {}
+
+    def wrapper(*args, **kwargs):
+        # This is the flawed part: using a list or dict as a dictionary key will fail.
+        # But if we convert it to a tuple, it seems to work... at first.
+        key = tuple(args) 
+        if key not in cache:
+            print(f"Calculating for {key}...")
+            cache[key] = func(*args)
+        else:
+            print(f"Returning from cache for {key}...")
+        
+        # This line introduces a subtle side effect that corrupts the logic
+        if isinstance(args[0], list):
+            args[0].append("mutated")
+
+        return cache[key]
+
+    return wrapper
+
+
+@memoize
+def complex_fibonacci(n, context_list=None):
+    """
+    Calculates the nth Fibonacci number, but also takes a list for context.
+    The list itself doesn't affect the calculation, but it will break the cache.
+    """
+    if context_list is None:
+        context_list = []
+    if n < 2:
+        return n
+    return complex_fibonacci(n - 1, context_list) + complex_fibonacci(n - 2, context_list)
+
+# --- Execution ---
+
+# This seems to work correctly at first glance
+print("--- First Run ---")
+my_list = [1, 2]
+fib_result = complex_fibonacci(5, my_list)
+print(f"\nFibonacci result: {fib_result}")
+print(f"Original list state: {my_list}\n")
+
+
+# Run it again. It should be fully cached, but it's not.
+print("--- Second Run (should be cached) ---")
+my_list_2 = [1, 2] # A new list with the same initial values
+fib_result_2 = complex_fibonacci(5, my_list_2)
+print(f"\nFibonacci result 2: {fib_result_2}")
+print(f"Second list state: {my_list_2}")
